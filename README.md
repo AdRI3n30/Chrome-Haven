@@ -32,6 +32,6 @@ Faire de Chrome Haven un sanctuaire numérique où la technologie et l’imagina
 
 # Collaborateur :
 
-Borée Adrien
-Ballauri Tom
-Novarese Nathan
+Borée Adrien /
+ Ballauri Tom /
+ Novarese Nathan
