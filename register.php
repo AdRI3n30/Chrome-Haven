@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         VALUES ('$username', '$email', '$password', 'user', 0)";
         if ($mysqli->query($insertQuery)) {
             echo "Inscription réussie. Vous pouvez maintenant vous connecter.";
-            header("Location: /login.php");
+            header("Location: /chrome-haven/home.php");
             exit();
         } else {
             echo "Erreur : " . $mysqli->error;
