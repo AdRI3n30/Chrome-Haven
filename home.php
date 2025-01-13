@@ -1,35 +1,51 @@
 <?php
 session_start();
+$mysqli = new mysqli("localhost", "root", "", "chrome-haven");
 
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /chrome-haven/index.php");
-    exit();
+if ($mysqli->connect_error) {
+    die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-$username = $_SESSION['username'];
-?>
 
+$query = "SELECT * FROM Article ORDER BY id DESC"; 
+$result = $mysqli->query($query);
+
+if (!$result) {
+    die("Erreur dans la requête SQL : " . $mysqli->error);
+}
+?>
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil</title>
+    <title>Home</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Bienvenue, <?php echo htmlspecialchars($username); ?> !</h1>
-        <p>Vous êtes connecté avec succès.</p>
-        <button onclick="window.location.href='/chrome-haven/account.php'">Voir mon profil</button>
+    <h1>Home</h1>
+
+
+    <div class="navbar">
+        <a href="login.php"><button>Connexion</button></a>
+        <a href="register.php"><button>Inscription</button></a>
+        <a href="sell.php"><button>Vendre un article</button></a>
+        <a href="cart.php"><button>Panier</button></a>
+        <a href="account.php"><button>Mon compte</button></a>
     </div>
-    <h1>Articles en vente</h1>
-    <?php while ($article = $result->fetch_assoc()): ?>
-        <div>
-            <h2><?php echo $article['title']; ?></h2>
-            <p><?php echo $article['description']; ?></p>
-            <a href="detail.php?id=<?php echo $article['id']; ?>">Voir plus</a>
-        </div>
-    <?php endwhile; ?>
+    <h2>Articles en vente</h2>
+    <?php
+    if ($result->num_rows > 0) {
+        while ($article = $result->fetch_assoc()) {
+            ?>
+            <div class="article">
+                <h2><?php echo htmlspecialchars($article['title']); ?></h2>
+                <p><?php echo htmlspecialchars($article['description']); ?></p>
+                <p>Prix : <?php echo htmlspecialchars($article['price']); ?> €</p>
+                <a href="detail.php?id=<?php echo $article['id']; ?>">Voir les détails</a>
+            </div>
+            <?php
+        }
+    } else {
+        echo "<p>Aucun article disponible pour le moment.</p>";
+    }
+    ?>
 </body>
 </html>

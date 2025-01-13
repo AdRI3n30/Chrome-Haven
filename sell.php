@@ -1,6 +1,9 @@
 <?php
 session_start();
-include 'includes/db.php';
+$mysqli = new mysqli("localhost", "root", "", "chrome-haven");
+if ($mysqli->connect_error) {
+    die("Échec de connexion : " . $mysqli->connect_error);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
