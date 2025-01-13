@@ -23,5 +23,13 @@ $username = $_SESSION['username'];
         <p>Vous êtes connecté avec succès.</p>
         <button onclick="window.location.href='/chrome-haven/account.php'">Voir mon profil</button>
     </div>
+    <h1>Articles en vente</h1>
+    <?php while ($article = $result->fetch_assoc()): ?>
+        <div>
+            <h2><?php echo $article['title']; ?></h2>
+            <p><?php echo $article['description']; ?></p>
+            <a href="detail.php?id=<?php echo $article['id']; ?>">Voir plus</a>
+        </div>
+    <?php endwhile; ?>
 </body>
 </html>
