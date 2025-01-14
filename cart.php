@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 $mysqli = new mysqli("localhost", "root", "", "chrome-haven");
 
 if ($mysqli->connect_error) {

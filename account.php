@@ -2,8 +2,8 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /chrome-haven/index.php");
-    exit();
+    header("Location: login.php");
+    exit;
 }
 
 $username = $_SESSION['username'];
