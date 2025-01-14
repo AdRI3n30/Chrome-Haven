@@ -1,46 +1,81 @@
 <?php
 session_start();
 $mysqli = new mysqli("localhost", "root", "", "chrome-haven");
+
 if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $price = $_POST['price'];
-    $stock = $_POST['stock'];
-    $author_id = $_SESSION['user_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $stmt = $mysqli->prepare("INSERT INTO Article (title, description, price, author_id, stock, published_date) VALUES (?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssdii", $title, $description, $price, $author_id, $stock);
+    $name = $_POST['name'] ?? '';
+    $description = $_POST['description'] ?? '';
+    $price = $_POST['price'] ?? '';
+    $quantity = $_POST['quantity'] ?? 1; // Ajout du champ quantité
+    $user_id = $_SESSION['user_id'] ?? null; 
+
+    if (empty($name) || empty($description) || empty($price) || !$user_id || empty($quantity)) {
+        die("Tous les champs sont requis !");
+    }
+
+    // Insérer l'article dans la table Article
+    $query = "INSERT INTO Article (name, description, price, author_id) VALUES (?, ?, ?, ?)";
+    $stmt = $mysqli->prepare($query);
+
+    if (!$stmt) {
+        die("Erreur dans la préparation de la requête : " . $mysqli->error);
+    }
+
+    $stmt->bind_param("ssdi", $name, $description, $price, $user_id);
 
     if ($stmt->execute()) {
-        header("Location: home.php");
-        exit;
+        echo "Article ajouté avec succès !";
+        
+        // Récupérer l'ID de l'article inséré
+        $article_id = $stmt->insert_id;
+        
+        // Ajouter l'article dans la table Stock
+        $stock_query = "INSERT INTO Stock (article_id, quantity) VALUES (?, ?)";
+        $stock_stmt = $mysqli->prepare($stock_query);
+        
+        if ($stock_stmt) {
+            $stock_stmt->bind_param("ii", $article_id, $quantity);
+            if ($stock_stmt->execute()) {
+                echo " Quantité ajoutée au stock avec succès.";
+            } else {
+                echo "Erreur lors de l'ajout de la quantité au stock : " . $stock_stmt->error;
+            }
+        } else {
+            echo "Erreur dans la préparation de la requête de stock : " . $mysqli->error;
+        }
     } else {
-        $error = "Erreur lors de l'ajout de l'article.";
+        echo "Erreur lors de l'ajout de l'article : " . $stmt->error;
     }
+
+    $stmt->close();
 }
 ?>
-<!DOCTYPE html>
+
 <html>
 <head>
-    <title>Vente</title>
+    <title>Vendre un article</title>
 </head>
 <body>
-<h1>Mettre un article en vente</h1>
-<?php if (isset($error)) echo "<p>$error</p>"; ?>
-<form method="POST">
-    <label>Nom</label>
-    <input type="text" name="title" required>
-    <label>Description</label>
-    <textarea name="description" required></textarea>
-    <label>Prix</label>
-    <input type="number" step="0.01" name="price" required>
-    <label>Stock</label>
-    <input type="number" name="stock" required>
-    <button type="submit">Ajouter</button>
-</form>
+    <h1>Vendre un article</h1>
+    <form method="POST" action="sell.php">
+        <label for="name">Nom :</label>
+        <input type="text" name="name" id="name" required><br><br>
+
+        <label for="description">Description :</label>
+        <textarea name="description" id="description" required></textarea><br><br>
+
+        <label for="price">Prix :</label>
+        <input type="number" step="0.01" name="price" id="price" required><br><br>
+
+        <label for="quantity">Quantité :</label>
+        <input type="number" name="quantity" id="quantity" required min="1"><br><br>
+
+        <button type="submit">Ajouter</button>
+    </form>
 </body>
 </html>
