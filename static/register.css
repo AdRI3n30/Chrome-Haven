@@ -36,7 +36,7 @@ input[type="text"], input[type="email"], input[type="password"] {
     padding: 10px;
     margin: 15px 0; /* Espace augmenté entre les champs */
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 16px;
 }
 
