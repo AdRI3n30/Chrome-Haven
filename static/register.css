@@ -22,10 +22,10 @@ h2 {
 form {
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
-    padding: 30px; /* Augmenté pour agrandir le formulaire */
+    padding: 30px;
     width: 400px;
-    height: auto; /* S'ajuste automatiquement en fonction du contenu */
-    min-height: 450px; /* Ajout d'une hauteur minimale pour plus d'espace */
+    height: auto;
+    min-height: 450px; 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
@@ -34,7 +34,7 @@ input[type="text"], input[type="email"], input[type="password"] {
     width: 80%;
     max-width: 350px;
     padding: 10px;
-    margin: 15px 0; /* Espace augmenté entre les champs */
+    margin: 15px 0; 
     border: 1px solid #ccc;
     border-radius: 10px;
     font-size: 16px;
