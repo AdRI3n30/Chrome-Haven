@@ -13,7 +13,7 @@ if ($mysqli->connect_error) {
 if (isset($_GET['id'])) {
     $user_id = $_GET['id'];
 
-    // Récupérer les détails de l'utilisateur à modifier
+
     $query = "SELECT * FROM User WHERE id = ?";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param("i", $user_id);
@@ -29,7 +29,7 @@ if (isset($_GET['id'])) {
 
 $message = "";
 
-// Mettre à jour l'utilisateur
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];

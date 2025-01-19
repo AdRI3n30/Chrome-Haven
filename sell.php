@@ -17,14 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
     $price = $_POST['price'] ?? '';
-    $quantity = $_POST['quantity'] ?? 1; // Ajout du champ quantité
+    $quantity = $_POST['quantity'] ?? 1; 
     $user_id = $_SESSION['user_id'] ?? null; 
 
     if (empty($name) || empty($description) || empty($price) || !$user_id || empty($quantity)) {
         die("Tous les champs sont requis !");
     }
 
-    // Insérer l'article dans la table Article
     $query = "INSERT INTO Article (name, description, price, author_id) VALUES (?, ?, ?, ?)";
     $stmt = $mysqli->prepare($query);
 
@@ -36,11 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         echo "Article ajouté avec succès !";
-        
-        // Récupérer l'ID de l'article inséré
+     
         $article_id = $stmt->insert_id;
-        
-        // Ajouter l'article dans la table Stock
+
         $stock_query = "INSERT INTO Stock (article_id, quantity) VALUES (?, ?)";
         $stock_stmt = $mysqli->prepare($stock_query);
         

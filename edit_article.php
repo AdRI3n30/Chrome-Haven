@@ -10,7 +10,6 @@ if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-// Vérifier le rôle de l'utilisateur dans la base de données
 $user_id = $_SESSION['user_id'];
 $query = "SELECT role FROM User WHERE id = ?";
 $stmt = $mysqli->prepare($query);
@@ -28,10 +27,8 @@ if ($user['role'] !== 'admin') {
     exit;
 }
 
-// Initialisation des variables
 $message = "";
 
-// Récupérer les informations de l'article
 if (isset($_GET['id'])) {
     $article_id = $_GET['id'];
     $query = "SELECT * FROM Article WHERE id = ?";
@@ -46,7 +43,6 @@ if (isset($_GET['id'])) {
 
     $article = $articleResult->fetch_assoc();
 
-    // Récupérer la quantité actuelle de l'article dans le stock
     $stockQuery = "SELECT quantity FROM Stock WHERE article_id = ?";
     $stockStmt = $mysqli->prepare($stockQuery);
     $stockStmt->bind_param("i", $article_id);
@@ -56,27 +52,24 @@ if (isset($_GET['id'])) {
     $currentQuantity = $stock ? $stock['quantity'] : 0;
 }
 
-// Modifier l'article et la quantité dans le stock
 if (isset($_POST['update_article'])) {
     $name = $_POST['name'];
     $description = $_POST['description'];
     $price = $_POST['price'];
     $quantity = $_POST['quantity'];
 
-    // Mettre à jour les informations de l'article
+
     $updateQuery = "UPDATE Article SET name = ?, description = ?, price = ? WHERE id = ?";
     $stmt = $mysqli->prepare($updateQuery);
     $stmt->bind_param("ssdi", $name, $description, $price, $article_id);
     if ($stmt->execute()) {
-        // Mettre à jour la quantité dans la table Stock si nécessaire
         $stockQuery = "UPDATE Stock SET quantity = ? WHERE article_id = ?";
         $stockStmt = $mysqli->prepare($stockQuery);
         if ($stockStmt) {
             $stockStmt->bind_param("ii", $quantity, $article_id);
             $stockStmt->execute();
         }
-        
-        // Rediriger vers la page admin après la mise à jour
+
         header("Location: admin.php");
         exit;
     }
