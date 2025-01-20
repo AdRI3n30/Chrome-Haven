@@ -10,7 +10,6 @@ if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-// Vérifier le rôle de l'utilisateur dans la base de données
 $user_id = $_SESSION['user_id'];
 $query = "SELECT role FROM User WHERE id = ?";
 $stmt = $mysqli->prepare($query);
@@ -71,6 +70,8 @@ $quantitiesResult = $mysqli->query("SELECT article_id, quantity AS total_quantit
 // Récupérer tous les utilisateurs
 $usersResult = $mysqli->query("SELECT id, username, email, role FROM User");
 
+// Récupérer toutes les factures
+$invoicesResult = $mysqli->query("SELECT * FROM Invoice");
 ?>
 
 <!DOCTYPE html>
@@ -107,18 +108,17 @@ $usersResult = $mysqli->query("SELECT id, username, email, role FROM User");
                 <td><?= number_format($article['price'], 2) ?> €</td>
                 <td>
                     <?php
-                    $quantity = 0; // Par défaut, la quantité est à 0
+                    $quantity = 0; 
                     $article_id = $article['id'];
 
-                    // Recherche de la quantité totale de l'article dans la table Stock
-                    $quantitiesResult->data_seek(0); // Réinitialise le pointeur du résultat
+                    $quantitiesResult->data_seek(0); 
                     while ($quantityRow = $quantitiesResult->fetch_assoc()) {
                         if ($quantityRow['article_id'] === $article_id) {
-                            $quantity = $quantityRow['total_quantity']; // Récupère la quantité totale
+                            $quantity = $quantityRow['total_quantity'];
                             break;
                         }
                     }
-                    echo $quantity; // Affiche la quantité totale
+                    echo $quantity; 
                     ?>
                 </td>
                 <td>
@@ -149,6 +149,31 @@ $usersResult = $mysqli->query("SELECT id, username, email, role FROM User");
                     <a href="edit_user.php?id=<?= $user['id'] ?>">Modifier</a> |
                     <a href="delete_user.php?id=<?= $user['id'] ?>">Supprimer</a>
                 </td>
+            </tr>
+        <?php endwhile; ?>
+    </table>
+
+    <h2>Gestion des factures</h2>
+    <h3>Liste des factures</h3>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>ID Utilisateur</th>
+            <th>Date</th>
+            <th>Montant (€)</th>
+            <th>Adresse</th>
+            <th>Ville</th>
+            <th>Code Postal</th>
+        </tr>
+        <?php while ($invoice = $invoicesResult->fetch_assoc()): ?>
+            <tr>
+                <td><?= htmlspecialchars($invoice['id']) ?></td>
+                <td><?= htmlspecialchars($invoice['user_id']) ?></td>
+                <td><?= htmlspecialchars($invoice['transaction_date']) ?></td>
+                <td><?= number_format($invoice['amount'], 2) ?></td>
+                <td><?= htmlspecialchars($invoice['billing_address']) ?></td>
+                <td><?= htmlspecialchars($invoice['billing_city']) ?></td>
+                <td><?= htmlspecialchars($invoice['billing_postal_code']) ?></td>
             </tr>
         <?php endwhile; ?>
     </table>

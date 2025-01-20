@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -9,13 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 
 $mysqli = new mysqli("localhost", "root", "", "chrome-haven");
 
-// Vérifier la connexion
+
 if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-// Récupération des informations de l'utilisateur
-$user_id = $_GET['user_id'] ?? $_SESSION['user_id']; // Si aucun paramètre n'est fourni, on prend l'utilisateur connecté
+$user_id = $_GET['user_id'] ?? $_SESSION['user_id']; 
 $query = "SELECT id, username, email, balance, profile_picture, role, created_at FROM user WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 
@@ -44,7 +42,29 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $articles_result = $stmt->get_result();
 
-// Récupération des articles achetés par l'utilisateur (uniquement si c'est le compte connecté)
+// Récupération de l'historique des factures (achats validés)
+$invoices = [];
+if ($user_id == $_SESSION['user_id']) {
+    $invoiceQuery = "SELECT id, transaction_date, amount, billing_address, billing_city, billing_postal_code 
+                     FROM invoice 
+                     WHERE user_id = ? 
+                     ORDER BY transaction_date DESC";
+    $stmt = $mysqli->prepare($invoiceQuery);
+
+    if (!$stmt) {
+        die("Erreur dans la préparation de la requête pour les factures : " . $mysqli->error);
+    }
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $invoice_result = $stmt->get_result();
+
+    while ($row = $invoice_result->fetch_assoc()) {
+        $invoices[] = $row;
+    }
+}
+
+// Récupération des articles achetés via le panier (avant validation)
 $purchased_articles = [];
 if ($user_id == $_SESSION['user_id']) {
     $query = "SELECT a.name, a.price, c.quantity FROM cart c
@@ -115,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
         <h2>Ajouter de l'argent à votre solde</h2>
         <form method="POST" action="add_balance.php">
             <label for="amount">Montant :</label>
-            <input type="number" id="amount" name="amount" step="0.01" required>
+            <input type="number" id="amount" name="amount" step="1" required>
             <button type="submit">Ajouter</button>
         </form>
     <?php endif; ?>
@@ -132,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
     <?php endif; ?>
 
     <?php if ($user_id == $_SESSION['user_id']): ?>
-        <h2>Articles achetés</h2>
+        <h2>Articles achetés via le panier</h2>
         <?php if (!empty($purchased_articles)): ?>
             <ul>
                 <?php foreach ($purchased_articles as $article): ?>
@@ -140,9 +160,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
                 <?php endforeach; ?>
             </ul>
         <?php else: ?>
-            <p>Vous n'avez rien acheté pour le moment.</p>
+            <p>Vous n'avez rien acheté via le panier pour le moment.</p>
+        <?php endif; ?>
+
+        <h2>Historique des Achats Validés</h2>
+        <?php if (!empty($invoices)): ?>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>ID Facture</th>
+                        <th>Date</th>
+                        <th>Montant (€)</th>
+                        <th>Adresse</th>
+                        <th>Ville</th>
+                        <th>Code Postal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($invoices as $invoice): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($invoice['id']); ?></td>
+                            <td><?php echo htmlspecialchars($invoice['transaction_date']); ?></td>
+                            <td><?php echo number_format($invoice['amount'], 2); ?></td>
+                            <td><?php echo htmlspecialchars($invoice['billing_address']); ?></td>
+                            <td><?php echo htmlspecialchars($invoice['billing_city']); ?></td>
+                            <td><?php echo htmlspecialchars($invoice['billing_postal_code']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Vous n'avez pas encore validé d'achat.</p>
         <?php endif; ?>
     <?php endif; ?>
+    <form action="logout.php" method="POST" style="margin-top: 20px;">
+        <button type="submit">Se déconnecter</button>
+    </form>
 
     <a href="home.php">Retour à l'accueil</a>
 </body>
