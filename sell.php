@@ -13,7 +13,6 @@ if ($mysqli->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
     $price = $_POST['price'] ?? '';
@@ -59,26 +58,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendre un article</title>
+    <link rel="stylesheet" href="/static/sell.css">
 </head>
 <body>
-    <h1>Vendre un article</h1>
-    <form method="POST" action="sell.php">
-        <label for="name">Nom :</label>
-        <input type="text" name="name" id="name" required><br><br>
+    <div class="container">
+        <h1 class="page-title">Vendre un article</h1>
+        <form class="sell-form" method="POST" action="sell.php">
+            <div class="form-group">
+                <label for="name">Nom :</label>
+                <input type="text" name="name" id="name" required>
+            </div>
 
-        <label for="description">Description :</label>
-        <textarea name="description" id="description" required></textarea><br><br>
+            <div class="form-group">
+                <label for="description">Description :</label>
+                <textarea name="description" id="description" required></textarea>
+            </div>
 
-        <label for="price">Prix :</label>
-        <input type="number" step="0.01" name="price" id="price" required><br><br>
+            <div class="form-group">
+                <label for="price">Prix :</label>
+                <input type="number" step="0.01" name="price" id="price" required>
+            </div>
 
-        <label for="quantity">Quantité :</label>
-        <input type="number" name="quantity" id="quantity" required min="1"><br><br>
+            <div class="form-group">
+                <label for="quantity">Quantité :</label>
+                <input type="number" name="quantity" id="quantity" required min="1">
+            </div>
 
-        <button type="submit">Ajouter</button>
-    </form>
+            <button type="submit" class="btn-submit">Ajouter</button>
+        </form>
+        
+        <a href="home.php" class="back-link">← Retour à l'accueil</a>
+    </div>
 </body>
 </html>
