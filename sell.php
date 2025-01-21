@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         echo "Article ajouté avec succès !";
+        header("Location: home.php");
+        exit;
      
         $article_id = $stmt->insert_id;
 
