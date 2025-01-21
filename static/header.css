@@ -15,56 +15,55 @@ header {
 .header-container {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Donut à gauche et tout le reste à droite */
+    justify-content: space-between;
 }
 
 .logo-and-title {
     display: flex;
-    align-items: center; /* Aligne verticalement l'image et le titre */
-    gap: 10px; /* Espace entre l'image et le titre */
+    align-items: center;
+    gap: 10px;
 }
 
 .header-title {
-    margin: 0; /* Supprime les marges par défaut */
-    font-size: 24px; /* Taille du texte du titre */
-    color: white; /* Couleur blanche pour contraster avec l'arrière-plan */
-    font-family: Arial, sans-serif; /* Police pour correspondre au style global */
+    margin: 0;
+    font-size: 24px;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
 .header-logo {
     width: 50px;
     height: auto;
-    
 }
 
 .search-and-navbar {
     display: flex;
     align-items: center;
-    gap: 15px; /* Espace entre la barre de recherche et les boutons */
+    gap: 15px;
 }
 
 .search-bar {
     display: flex;
     align-items: center;
-    background-color: white; /* Fond blanc */
-    border: 2px solid #ccc; /* Bordure grise */
-    border-radius: 30px; /* Bordures arrondies pour ressembler à un cercle */
-    padding: 5px 15px; /* Ajout d'espacement interne */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère pour un effet moderne */
+    background-color: white;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    padding: 5px 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar input {
     border: none;
     outline: none;
-    flex-grow: 1; /* Prend toute la place disponible */
+    flex-grow: 1;
     font-size: 16px;
-    color: #333; /* Couleur du texte */
+    color: #333;
     padding: 5px;
     font-family: Arial, sans-serif;
 }
 
 .search-bar input::placeholder {
-    color: #aaa; /* Couleur du texte placeholder */
+    color: #aaa;
 }
 
 .search-bar button {
@@ -78,9 +77,10 @@ header {
     width: 20px;
     height: 20px;
 }
+
 .navbar {
     display: flex;
-    gap: 10px; /* Espace entre les icônes */
+    gap: 10px;
 }
 
 .navbar a .nav-icon {
