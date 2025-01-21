@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #000000;
     margin: 0;
     padding: 0;
 }
@@ -9,9 +9,13 @@ body {
     width: 80%;
     margin: 20px auto;
     padding: 20px;
-    background-color: white;
+    background-color: #333;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-table {
+    color: white
 }
 
 button {
@@ -33,10 +37,14 @@ a {
 
 p {
     font-size: 16px;
-    color: #333;
+    color: #ffffff;
+}
+
+h1 {
+    color: white;  
 }
 
 h2 {
-    color: #333;
+    color: #ffffff;
     font-size: 24px;
 }
