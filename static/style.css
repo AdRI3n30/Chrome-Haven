@@ -101,3 +101,15 @@ h1 {
         width: calc(100% - 40px);
     }
 }
+
+.nav-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+    transition: transform 0.2s ease;
+}
+
+.nav-icon:hover {
+    transform: scale(1.1);
+}
+
