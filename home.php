@@ -24,28 +24,31 @@ if (!$result) {
 </head>
 <body>
     <header>
-        <div class="header-container">
-            <img src="/source/donut_header.png" alt="Logo accueil" class="header-logo">
-            <div class="search-and-navbar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Rechercher...">
-                    <button type="button">
-                        <img src="/source/Vector.png" alt="Loupe">
-                    </button>
-                </div>
-                <div class="navbar">
-                    <a href="sell.php">
-                        <img src="/source/Main.png" alt="Vendre un article" class="nav-icon">
-                    </a>
-                    <a href="cart.php">
-                        <img src="/source/Frame.png" alt="Panier" class="nav-icon">
-                    </a>
-                    <a href="account.php">
-                        <img src="/source/Profile.png" alt="Mon compte" class="nav-icon">
-                    </a>
-                </div>
-            </div>
+    <div class="header-container">
+    <div class="logo-and-title">
+        <img src="/source/donut_header.png" alt="Logo accueil" class="header-logo">
+        <h1 class="header-title">Chrome Haven</h1>
+    </div>
+    <div class="search-and-navbar">
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher...">
+            <button type="button">
+                <img src="/source/Vector.png" alt="Loupe">
+            </button>
         </div>
+        <div class="navbar">
+            <a href="sell.php">
+                <img src="/source/Main.png" alt="Vendre un article" class="nav-icon">
+            </a>
+            <a href="cart.php">
+                <img src="/source/Frame.png" alt="Panier" class="nav-icon">
+            </a>
+            <a href="account.php">
+                <img src="/source/Profile.png" alt="Mon compte" class="nav-icon">
+            </a>
+        </div>
+    </div>
+</div>
     </header>
 
     <div class="flex-container">

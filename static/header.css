@@ -18,6 +18,19 @@ header {
     justify-content: space-between; /* Donut à gauche et tout le reste à droite */
 }
 
+.logo-and-title {
+    display: flex;
+    align-items: center; /* Aligne verticalement l'image et le titre */
+    gap: 10px; /* Espace entre l'image et le titre */
+}
+
+.header-title {
+    margin: 0; /* Supprime les marges par défaut */
+    font-size: 24px; /* Taille du texte du titre */
+    color: white; /* Couleur blanche pour contraster avec l'arrière-plan */
+    font-family: Arial, sans-serif; /* Police pour correspondre au style global */
+}
+
 .header-logo {
     width: 50px;
     height: auto;
