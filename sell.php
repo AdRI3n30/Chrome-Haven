@@ -23,20 +23,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Tous les champs sont requis !");
     }
 
-    $query = "INSERT INTO Article (name, description, price, author_id) VALUES (?, ?, ?, ?)";
+    $image_url = null;
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $image_tmp_name = $_FILES['image']['tmp_name'];
+        $image_name = basename($_FILES['image']['name']);
+        $image_type = pathinfo($image_name, PATHINFO_EXTENSION);
+        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array(strtolower($image_type), $allowed_types)) {
+
+            $upload_dir = 'uploads/';
+            $image_url = $upload_dir . uniqid() . '.' . $image_type; 
+
+            if (move_uploaded_file($image_tmp_name, $image_url)) {
+
+            } else {
+                die("Erreur lors du téléchargement de l'image.");
+            }
+        } else {
+            die("Type de fichier non autorisé. Seules les images JPG, JPEG, PNG, et GIF sont autorisées.");
+        }
+    }
+
+  
+    $query = "INSERT INTO Article (name, description, price, author_id, image_url) VALUES (?, ?, ?, ?, ?)";
     $stmt = $mysqli->prepare($query);
 
     if (!$stmt) {
         die("Erreur dans la préparation de la requête : " . $mysqli->error);
     }
 
-    $stmt->bind_param("ssdi", $name, $description, $price, $user_id);
+    $stmt->bind_param("ssdis", $name, $description, $price, $user_id, $image_url);
 
     if ($stmt->execute()) {
-        echo "Article ajouté avec succès !";
-        header("Location: home.php");
-        exit;
-     
+      
         $article_id = $stmt->insert_id;
 
         $stock_query = "INSERT INTO Stock (article_id, quantity) VALUES (?, ?)";
@@ -45,7 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stock_stmt) {
             $stock_stmt->bind_param("ii", $article_id, $quantity);
             if ($stock_stmt->execute()) {
-                echo " Quantité ajoutée au stock avec succès.";
+                echo "Article ajouté avec succès et quantité ajoutée au stock.";
+                header("Location: home.php");
+                exit;
             } else {
                 echo "Erreur lors de l'ajout de la quantité au stock : " . $stock_stmt->error;
             }
@@ -71,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1 class="page-title">Vendre un article</h1>
-        <form class="sell-form" method="POST" action="sell.php">
+        <form class="sell-form" method="POST" action="sell.php" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Nom :</label>
                 <input type="text" name="name" id="name" required>
@@ -90,6 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="quantity">Quantité :</label>
                 <input type="number" name="quantity" id="quantity" required min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="image">Image :</label>
+                <input type="file" name="image" id="image" accept="image/*">
             </div>
 
             <button type="submit" class="btn-submit">Ajouter</button>
