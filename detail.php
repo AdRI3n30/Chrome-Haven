@@ -18,7 +18,6 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $article_id = intval($_GET['id']);
 
-// Récupérer les informations de l'article
 $query = "SELECT * FROM Article WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 
@@ -37,7 +36,6 @@ if ($result->num_rows === 0) {
 $article = $result->fetch_assoc();
 $stmt->close();
 
-// Récupérer la quantité restante dans le stock
 $stockQuery = "SELECT quantity FROM Stock WHERE article_id = ?";
 $stockStmt = $mysqli->prepare($stockQuery);
 $stockStmt->bind_param("i", $article_id);
@@ -58,14 +56,12 @@ $stockStmt->close();
     <p><?php echo htmlspecialchars($article['description']); ?></p>
     <p>Prix : <?php echo htmlspecialchars($article['price']); ?> €</p>
     
-    <!-- Afficher la quantité restante en stock -->
+ 
     <p><strong>Quantité restante en stock : </strong> <?php echo $remainingQuantity; ?></p>
 
-    <!-- Formulaire pour ajouter au panier avec une quantité -->
     <form method="POST" action="cart.php">
         <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-        
-        <!-- Champ de quantité -->
+
         <label for="quantity">Quantité :</label>
         <input type="number" name="quantity" id="quantity" required min="1" max="<?php echo $remainingQuantity; ?>" value="1"><br><br>
         

@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="email" id="email" name="email" placeholder="Adresse email..." required>
             <input type="password" id="password" name="password" placeholder="Mot de passe..." required>
             <button type="submit">S'inscrire →</button>
-            <p>Déjà un compte ? <a href="/chrome-haven/login.php">Connectez-vous ici!</a></p>
+            <p>Déjà un compte ? <a href="login.php">Connectez-vous ici!</a></p>
         </form>
     </div>
 </body>

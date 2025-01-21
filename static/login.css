@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: url('/source/BG_log_sign.webp') no-repeat center center fixed;
+    background: url('../source/BG_log_sign.webp') ;
     background-size: cover;
 }
 
@@ -17,14 +17,14 @@ form {
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
     padding: 20px;
-    width: 400px; /* Formulaire plus large */
+    width: 400px; 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
     text-align: center;
 }
 
 input[type="text"], input[type="password"] {
-    width: 80%; /* Champs plus petits, 80% de la largeur du formulaire */
-    max-width: 350px; /* Largeur maximale pour éviter qu'il devienne trop grand */
+    width: 80%; 
+    max-width: 350px; 
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;

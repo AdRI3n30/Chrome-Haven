@@ -11,7 +11,6 @@ if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-// Vérification du rôle de l'utilisateur connecté
 $is_admin = false;
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
