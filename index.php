@@ -9,6 +9,6 @@ if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-header("Location: /chrome-haven/login.php");
+header("Location: home.php");
 exit();
 ?>
