@@ -66,6 +66,14 @@ if ($stockResult) {
 
 $stockStmt->close();
 
+$sellerQuery = "SELECT username FROM user WHERE id = ?";
+$sellerStmt = $mysqli->prepare($sellerQuery);
+$sellerStmt->bind_param("i", $article['author_id']);
+$sellerStmt->execute();
+$sellerResult = $sellerStmt->get_result();
+$seller = $sellerResult->fetch_assoc();
+$sellerStmt->close();
+
 $can_edit = $is_admin || ($user_id === $article['author_id']);
 ?>
 
@@ -94,6 +102,10 @@ $can_edit = $is_admin || ($user_id === $article['author_id']);
                     <img src="<?php echo htmlspecialchars($article['image_url']); ?>" alt="Image de l'article" />
                 </div>
             <?php endif; ?>
+
+            <div class="seller-info">
+                <p><strong>Vendu par :</strong> <?php echo htmlspecialchars($seller['username']); ?></p>
+            </div>
         </div>
 
         <?php if (isset($_SESSION['user_id'])): ?>

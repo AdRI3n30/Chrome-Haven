@@ -83,7 +83,7 @@ $invoicesResult = $mysqli->query("SELECT * FROM Invoice");
     <h1>Admin Panel</h1>
 
     <?php if (!empty($message)): ?>
-        <p style="color: green;"><?= htmlspecialchars($message) ?></p>
+        <p style="color: white;"><?= htmlspecialchars($message) ?></p>
     <?php endif; ?>
 
     <h2>Gestion des articles</h2>
