@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('/source/BG_home.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+header {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Donut à gauche et tout le reste à droite */
+}
+
+.header-logo {
+    width: 50px;
+    height: auto;
+    
+}
+
+.search-and-navbar {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espace entre la barre de recherche et les boutons */
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white; /* Fond blanc */
+    border: 2px solid #ccc; /* Bordure grise */
+    border-radius: 30px; /* Bordures arrondies pour ressembler à un cercle */
+    padding: 5px 15px; /* Ajout d'espacement interne */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère pour un effet moderne */
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    flex-grow: 1; /* Prend toute la place disponible */
+    font-size: 16px;
+    color: #333; /* Couleur du texte */
+    padding: 5px;
+    font-family: Arial, sans-serif;
+}
+
+.search-bar input::placeholder {
+    color: #aaa; /* Couleur du texte placeholder */
+}
+
+.search-bar button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.search-bar button img {
+    width: 20px;
+    height: 20px;
+}
+.navbar {
+    display: flex;
+    gap: 10px; /* Espace entre les icônes */
+}
+
+.navbar a .nav-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
