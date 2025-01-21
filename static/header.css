@@ -2,7 +2,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: url('/source/BG_home.jpg') no-repeat center center fixed;
+    background: url('../source/donut.png') no-repeat center center fixed;
+    background-color: rgb(23,23,23);
     background-size: cover;
 }
 
