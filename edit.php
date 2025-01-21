@@ -87,9 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtUpdateStock->execute();
 
         // Confirmation
-        echo "Article mis à jour avec succès!";
+        echo "<div class='success'>Article mis à jour avec succès!</div>";
     } else {
-        echo "Veuillez remplir tous les champs correctement.";
+        echo "<div class='error'>Veuillez remplir tous les champs correctement.</div>";
     }
 }
 ?>
@@ -100,27 +100,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier l'article</title>
+    <link rel="stylesheet" href="/static/edit.css">
 </head>
 <body>
-    <h1>Modifier l'article</h1>
+    <div class="container">
+        <h1>Modifier l'article</h1>
 
-    <!-- Formulaire pour modifier l'article -->
-    <form method="POST" action="edit.php?id=<?= $article['id'] ?>">
-        <label for="name">Nom de l'article:</label>
-        <input type="text" name="name" id="name" value="<?= htmlspecialchars($article['name']) ?>" required><br><br>
+        <form method="POST" action="edit.php?id=<?= $article['id'] ?>" class="form">
+            <label for="name">Nom de l'article:</label>
+            <input type="text" name="name" id="name" value="<?= htmlspecialchars($article['name']) ?>" required>
 
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" required><?= htmlspecialchars($article['description']) ?></textarea><br><br>
+            <label for="description">Description:</label>
+            <textarea name="description" id="description" required><?= htmlspecialchars($article['description']) ?></textarea>
 
-        <label for="price">Prix:</label>
-        <input type="number" name="price" id="price" value="<?= htmlspecialchars($article['price']) ?>" required><br><br>
+            <label for="price">Prix:</label>
+            <input type="number" name="price" id="price" value="<?= htmlspecialchars($article['price']) ?>" required>
 
-        <label for="quantity">Quantité en stock:</label>
-        <input type="number" name="quantity" id="quantity" value="<?= htmlspecialchars($quantity) ?>" required><br><br>
+            <label for="quantity">Quantité en stock:</label>
+            <input type="number" name="quantity" id="quantity" value="<?= htmlspecialchars($quantity) ?>" required>
 
-        <button type="submit">Mettre à jour l'article</button>
-    </form>
+            <button type="submit" class="button">Mettre à jour l'article</button>
+        </form>
 
-    <a href="home.php">Retour à l'accueil</a>
+        <a href="home.php" class="button">Retour à l'accueil</a>
+    </div>
 </body>
 </html>
