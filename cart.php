@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
     $article_id = $_POST['article_id'];
     $quantity = $_POST['quantity'];
 
+    // Récupérer la quantité en stock
     $stockQuery = "SELECT quantity FROM stock WHERE article_id = ?";
     $stockStmt = $mysqli->prepare($stockQuery);
     $stockStmt->bind_param("i", $article_id);
@@ -26,10 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
     $remainingQuantity = $stock ? $stock['quantity'] : 0;
     $stockStmt->close();
 
+    // Vérifier si la quantité demandée est disponible
     if ($quantity > $remainingQuantity) {
         echo "La quantité demandée dépasse le stock disponible.";
     } else {
-
+        // Ajouter l'article au panier
         $query = "SELECT * FROM cart WHERE user_id = ? AND article_id = ?";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("ii", $user_id, $article_id);
@@ -37,14 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-
+            // Si l'article est déjà dans le panier, mettre à jour la quantité
             $query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND article_id = ?";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("iii", $quantity, $user_id, $article_id);
             $stmt->execute();
             echo "Quantité mise à jour dans le panier.";
         } else {
-
+            // Si l'article n'est pas dans le panier, l'ajouter
             $query = "INSERT INTO cart (user_id, article_id, quantity) VALUES (?, ?, ?)";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("iii", $user_id, $article_id, $quantity);
@@ -52,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
             echo "Article ajouté au panier.";
         }
 
+        // Réduire la quantité du stock
         $query = "UPDATE stock SET quantity = quantity - ? WHERE article_id = ?";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("ii", $quantity, $article_id);
@@ -60,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
     }
 }
 
+// Vider le panier et réintégrer les articles dans le stock
 if (isset($_POST['clear_cart'])) {
     $query = "SELECT article_id, quantity FROM cart WHERE user_id = ?";
     $stmt = $mysqli->prepare($query);
@@ -67,10 +71,12 @@ if (isset($_POST['clear_cart'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Réintégrer la quantité dans le stock
     while ($row = $result->fetch_assoc()) {
         $article_id = $row['article_id'];
         $quantity = $row['quantity'];
 
+        // Ajouter la quantité au stock
         $queryStock = "UPDATE stock SET quantity = quantity + ? WHERE article_id = ?";
         $stmtStock = $mysqli->prepare($queryStock);
         $stmtStock->bind_param("ii", $quantity, $article_id);
@@ -78,6 +84,7 @@ if (isset($_POST['clear_cart'])) {
         $stmtStock->close();
     }
 
+    // Supprimer les articles du panier
     $queryDelete = "DELETE FROM cart WHERE user_id = ?";
     $stmtDelete = $mysqli->prepare($queryDelete);
     $stmtDelete->bind_param("i", $user_id);
@@ -103,6 +110,7 @@ if (isset($_POST['clear_cart'])) {
         <h1>Mon Panier</h1>
         
         <?php
+        // Récupérer les articles du panier
         $query = "SELECT a.id, a.name, a.price, c.quantity, s.quantity AS stock_quantity
                   FROM cart c
                   JOIN article a ON c.article_id = a.id
@@ -147,11 +155,12 @@ if (isset($_POST['clear_cart'])) {
             <div class="cart-actions">
                 <a href="home.php"><button>Continuer vos achats</button></a>
 
+                <!-- Vider le panier -->
                 <form method="POST" style="display: inline;">
                     <button type="submit" name="clear_cart">Vider le panier</button>
                 </form>
 
- 
+                <!-- Valider le panier -->
                 <form action="checkout.php" method="post" style="display: inline;">
                     <button type="submit">Valider le panier</button>
                 </form>
@@ -159,6 +168,10 @@ if (isset($_POST['clear_cart'])) {
 
         <?php else: ?>
             <p>Aucun article dans votre panier.</p>
+
+            <!-- Ajouter le bouton pour revenir à l'accueil si le panier est vide -->
+            <a href="home.php"><button>Retour à l'accueil</button></a>
+
         <?php endif; ?>
     </div>
 </body>
