@@ -55,8 +55,15 @@ $stockStmt = $mysqli->prepare($stockQuery);
 $stockStmt->bind_param("i", $article_id);
 $stockStmt->execute();
 $stockResult = $stockStmt->get_result();
-$stock = $stockResult->fetch_assoc();
-$remainingQuantity = $stock ? $stock['quantity'] : 0;
+
+if ($stockResult) {
+    $stock = $stockResult->fetch_assoc();
+    $remainingQuantity = $stock ? $stock['quantity'] : 0;
+} else {
+    $remainingQuantity = 0;
+    echo "Erreur dans la récupération du stock.";
+}
+
 $stockStmt->close();
 
 $can_edit = $is_admin || ($user_id === $article['author_id']);
@@ -68,7 +75,7 @@ $can_edit = $is_admin || ($user_id === $article['author_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails de l'article</title>
-    <link rel="stylesheet" href="/static/detail.css">
+    <link rel="stylesheet" href="static/detail.css">
 </head>
 <body>
     <div class="container">
@@ -78,8 +85,15 @@ $can_edit = $is_admin || ($user_id === $article['author_id']);
             <p class="article-description"><?php echo htmlspecialchars($article['description']); ?></p>
             <p class="article-price">Prix : <?php echo htmlspecialchars($article['price']); ?> €</p>
             <p class="article-stock">
-                <strong>Quantité restante en stock :</strong> <?php echo $remainingQuantity; ?>
+                <strong>Quantité restante en stock :</strong> 
+                <?php echo $remainingQuantity > 0 ? $remainingQuantity : "Indisponible"; ?>
             </p>
+
+            <?php if (!empty($article['image_url'])): ?>
+                <div class="article-image">
+                    <img src="<?php echo htmlspecialchars($article['image_url']); ?>" alt="Image de l'article" />
+                </div>
+            <?php endif; ?>
         </div>
 
         <?php if (isset($_SESSION['user_id'])): ?>

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -42,10 +41,6 @@ $stmtStock->bind_param("i", $article_id);
 $stmtStock->execute();
 $resultStock = $stmtStock->get_result();
 
-if ($resultStock->num_rows === 0) {
-    die("Quantité de stock non trouvée.");
-}
-
 $stock = $resultStock->fetch_assoc();
 $quantity = $stock['quantity'];
 $stmtStock->close();
@@ -72,20 +67,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = $_POST['price'] ?? 0;
     $quantity = $_POST['quantity'] ?? 0;
 
-    // Vérifier que tous les champs sont remplis correctement
     if (!empty($name) && !empty($description) && !empty($price) && isset($quantity)) {
-        // Mettre à jour l'article dans la table article
+
         $updateArticleQuery = "UPDATE article SET name = ?, description = ?, price = ? WHERE id = ?";
         $stmtUpdateArticle = $mysqli->prepare($updateArticleQuery);
         $stmtUpdateArticle->bind_param("ssdi", $name, $description, $price, $article_id);
         $stmtUpdateArticle->execute();
 
-        // Mettre à jour la quantité dans la table stock
         $updateStockQuery = "UPDATE stock SET quantity = ? WHERE article_id = ?";
         $stmtUpdateStock = $mysqli->prepare($updateStockQuery);
         $stmtUpdateStock->bind_param("ii", $quantity, $article_id);
         $stmtUpdateStock->execute();
 
+        echo "Article mis à jour avec succès!";
         // Confirmation
         echo "<div class='success'>Article mis à jour avec succès!</div>";
     } else {
@@ -106,6 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <h1>Modifier l'article</h1>
 
+    <form method="POST" action="edit.php?id=<?= $article['id'] ?>">
+        <label for="name">Nom de l'article:</label>
+        <input type="text" name="name" id="name" value="<?= htmlspecialchars($article['name']) ?>" required><br><br>
         <form method="POST" action="edit.php?id=<?= $article['id'] ?>" class="form">
             <label for="name">Nom de l'article:</label>
             <input type="text" name="name" id="name" value="<?= htmlspecialchars($article['name']) ?>" required>
