@@ -61,16 +61,13 @@ if (isset($_POST['update_article'])) {
     }
 }
 
-// Récupérer tous les articles
+
 $articlesResult = $mysqli->query("SELECT * FROM Article");
 
-// Récupérer toutes les quantités totales de chaque article depuis la table Stock
 $quantitiesResult = $mysqli->query("SELECT article_id, quantity AS total_quantity FROM Stock");
 
-// Récupérer tous les utilisateurs
 $usersResult = $mysqli->query("SELECT id, username, email, role FROM User");
 
-// Récupérer toutes les factures
 $invoicesResult = $mysqli->query("SELECT * FROM Invoice");
 ?>
 
@@ -80,7 +77,7 @@ $invoicesResult = $mysqli->query("SELECT * FROM Invoice");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/admin.css">
 </head>
 <body>
     <h1>Admin Panel</h1>
