@@ -1,7 +1,6 @@
-/* Import du style global */
 @import url(header.css);
 
-/* Section titre */
+
 h1 {
     text-align: center;
 }
@@ -10,7 +9,7 @@ h1 {
     display: flex;
     justify-content: center;
     background-color: #333;
-    border: 2px solid #ccc; /* Définit couleur, largeur et style en une seule ligne */
+    border: 2px solid #ccc;
     border-radius: 5rem;
     margin: 20px;
     width: 30rem;
@@ -27,12 +26,11 @@ h1 {
     margin: 0;
 }
 
-/* Conteneur des articles */
 .articles-flex {
     display: flex;
-    flex-wrap: wrap; /* Articles passent à la ligne si nécessaire */
+    flex-wrap: wrap; 
     justify-content: center;
-    gap: 20px; /* Espacement entre les articles */
+    gap: 20px; 
     padding: 20px;
 }
 
@@ -43,12 +41,11 @@ h1 {
     flex-direction: row;
 }
 
-/* Article individuel */
 .article {
     border: 1px solid #333;
     margin: 10px;
     padding: 20px;
-    width: calc(33.33% - 40px); /* Trois articles par ligne avec espacement */
+    width: calc(33.33% - 40px); 
     background-color: #1f1f1f;
     border-radius: 8px;
     color: white;
@@ -62,25 +59,21 @@ h1 {
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Style pour les titres d'article */
 .article h3 {
     margin: 0;
     font-size: 1.2rem;
     color: #00bcd4;
 }
 
-/* Texte des articles */
 .article p {
     margin: 10px 0;
 }
 
-/* Prix mis en avant */
 .price {
     font-weight: bold;
     color: #27ae60;
 }
 
-/* Lien "Voir les détails" */
 .article a {
     display: inline-block;
     color: #0078d4;
@@ -97,15 +90,14 @@ h1 {
     color: white;
 }
 
-/* Réactivité */
 @media (max-width: 1024px) {
     .article {
-        width: calc(50% - 40px); /* Deux articles par ligne */
+        width: calc(50% - 40px);
     }
 }
 
 @media (max-width: 768px) {
     .article {
-        width: calc(100% - 40px); /* Un article par ligne */
+        width: calc(100% - 40px);
     }
 }

@@ -20,7 +20,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $article_id = intval($_GET['id']);
 $user_id = $_SESSION['user_id'];
 
-// Récupérer les informations de l'article
+
 $query = "SELECT * FROM article WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("i", $article_id);
@@ -34,7 +34,7 @@ if ($result->num_rows === 0) {
 $article = $result->fetch_assoc();
 $stmt->close();
 
-// Récupérer la quantité de l'article dans la table stock
+
 $queryStock = "SELECT quantity FROM stock WHERE article_id = ?";
 $stmtStock = $mysqli->prepare($queryStock);
 $stmtStock->bind_param("i", $article_id);
@@ -45,7 +45,6 @@ $stock = $resultStock->fetch_assoc();
 $quantity = $stock['quantity'];
 $stmtStock->close();
 
-// Vérifier si l'utilisateur est l'auteur de l'article ou admin
 $queryUser = "SELECT role FROM user WHERE id = ?";
 $stmtUser = $mysqli->prepare($queryUser);
 $stmtUser->bind_param("i", $user_id);
@@ -60,7 +59,6 @@ if (!$can_edit) {
     exit;
 }
 
-// Mise à jour des informations de l'article
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
@@ -92,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier l'article</title>
-    <link rel="stylesheet" href="/static/edit.css">
+    <link rel="stylesheet" href="static/edit.css">
 </head>
 <body>
     <div class="container">

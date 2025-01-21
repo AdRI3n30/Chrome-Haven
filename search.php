@@ -6,20 +6,28 @@ if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-$query = "SELECT * FROM Article ORDER BY id DESC"; 
+if (!isset($_GET['query']) || empty(trim($_GET['query']))) {
+
+    header("Location: home.php");
+    exit();
+}
+
+$searchTerm = $mysqli->real_escape_string($_GET['query']); // Échapper la chaîne pour éviter les injections SQL
+$query = "SELECT * FROM Article WHERE name LIKE '%$searchTerm%' ORDER BY id DESC";
+
 $result = $mysqli->query($query);
 
 if (!$result) {
     die("Erreur dans la requête SQL : " . $mysqli->error);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chrome Haven</title>
-    <link rel="stylesheet" href="static/header.css">
+    <title>Chrome Haven - Recherche</title>
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
@@ -30,34 +38,15 @@ if (!$result) {
                 <h1 class="header-title">Chrome Haven</h1>
             </div>
             <div class="search-and-navbar">
-                <div class="search-bar">
-                    <form action="search.php" method="GET" class="search-bar">
-                        <input type="text" name="query" placeholder="Rechercher..." aria-label="Rechercher un article">
-                        <button type="submit">
-                            <img src="source/Vector.png" alt="Loupe">
-                        </button>
-                    </form>
-                </div>
-                <div class="navbar">
-                    <a href="sell.php">
-                        <img src="source/Main.png" alt="Vendre un article" class="nav-icon">
-                    </a>
-                    <a href="cart.php">
-                        <img src="source/Frame.png" alt="Panier" class="nav-icon">
-                    </a>
-                    <a href="account.php">
-                        <img src="source/Profile.png" alt="Mon compte" class="nav-icon">
-                    </a>
-                </div>
+                <form action="search.php" method="GET" class="search-bar">
+                    <input type="text" name="query" placeholder="Rechercher..." aria-label="Rechercher un article">
+                    <button type="submit">
+                        <img src="source/Vector.png" alt="Loupe">
+                    </button>
+                </form>
             </div>
         </div>
     </header>
-
-    <div class="flex-container">
-        <div class="section-title-container">
-            <h2 class="section-title">Articles en vente</h2>
-        </div>
-    </div>
 
     <div class="articles-flex">
         <?php
@@ -74,7 +63,7 @@ if (!$result) {
                 <?php
             }
         } else {
-            echo "<p style=\"color: white;\">Aucun article disponible pour le moment.</p>";
+            echo "<p style=\"color: white;\">Aucun article trouvé pour cette recherche.</p>";
         }
         ?>
     </div>
