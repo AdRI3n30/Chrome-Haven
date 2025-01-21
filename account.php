@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compte</title>
-    <link rel="stylesheet" href="/static/account.css">
+    <link rel="stylesheet" href="static/account.css">
 </head>
 <body>
     <div class="profile-container">

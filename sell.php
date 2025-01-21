@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         echo "Article ajouté avec succès !";
+        header("Location: home.php");
+        exit;
      
         $article_id = $stmt->insert_id;
 
@@ -64,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendre un article</title>
-    <link rel="stylesheet" href="/static/sell.css">
+    <link rel="stylesheet" href="static/sell.css">
 </head>
 <body>
     <div class="container">
