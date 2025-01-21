@@ -9,7 +9,8 @@ if ($mysqli->connect_error) {
 }
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die("ID d'article non spécifié.");
+    header("Location: home.php");
+    exit;
 }
 
 $article_id = intval($_GET['id']);
@@ -22,6 +23,7 @@ $can_edit = false;
 // Si l'utilisateur est connecté, vérifier son rôle
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
+
 
     $queryUser = "SELECT role FROM user WHERE id = ?";
     $stmtUser = $mysqli->prepare($queryUser);
@@ -46,7 +48,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    die("Article non trouvé.");
+    header("Location: home.php");
+    exit;
 }
 
 $article = $result->fetch_assoc();
