@@ -13,6 +13,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_article_id'])) {
+    $article_id = $_POST['remove_article_id'];
+
+    $query = "DELETE FROM cart WHERE user_id = ? AND article_id = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("ii", $user_id, $article_id);
+    $stmt->execute();
+
+    echo "Article supprimé du panier.";
+    $stmt->close();
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isset($_POST['quantity'])) {
     $article_id = $_POST['article_id'];
     $quantity = $_POST['quantity'];
@@ -29,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
     if ($quantity > $remainingQuantity) {
         echo "La quantité demandée dépasse le stock disponible.";
     } else {
-
         $query = "SELECT * FROM cart WHERE user_id = ? AND article_id = ?";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("ii", $user_id, $article_id);
@@ -37,14 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            
             $query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND article_id = ?";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("iii", $quantity, $user_id, $article_id);
             $stmt->execute();
             echo "Quantité mise à jour dans le panier.";
         } else {
-
             $query = "INSERT INTO cart (user_id, article_id, quantity) VALUES (?, ?, ?)";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("iii", $user_id, $article_id, $quantity);
@@ -59,8 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['article_id']) && isse
         $stmt->close();
     }
 }
-
-// Vider le panier et réintégrer les articles dans le stock
 if (isset($_POST['clear_cart'])) {
     $query = "SELECT article_id, quantity FROM cart WHERE user_id = ?";
     $stmt = $mysqli->prepare($query);
@@ -68,7 +74,6 @@ if (isset($_POST['clear_cart'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    
     while ($row = $result->fetch_assoc()) {
         $article_id = $row['article_id'];
         $quantity = $row['quantity'];
@@ -80,7 +85,6 @@ if (isset($_POST['clear_cart'])) {
         $stmtStock->close();
     }
 
-
     $queryDelete = "DELETE FROM cart WHERE user_id = ?";
     $stmtDelete = $mysqli->prepare($queryDelete);
     $stmtDelete->bind_param("i", $user_id);
@@ -90,7 +94,6 @@ if (isset($_POST['clear_cart'])) {
     $stmt->close();
     $stmtDelete->close();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -106,7 +109,6 @@ if (isset($_POST['clear_cart'])) {
         <h1>Mon Panier</h1>
         
         <?php
-
         $query = "SELECT a.id, a.name, a.price, c.quantity, s.quantity AS stock_quantity
                   FROM cart c
                   JOIN article a ON c.article_id = a.id
@@ -126,6 +128,7 @@ if (isset($_POST['clear_cart'])) {
                         <th>Prix</th>
                         <th>Quantité</th>
                         <th>Total</th>
+                        <th>Supprimer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -139,6 +142,13 @@ if (isset($_POST['clear_cart'])) {
                         <td><?php echo htmlspecialchars($row['price']); ?> €</td>
                         <td><?php echo htmlspecialchars($row['quantity']); ?></td>
                         <td><?php echo htmlspecialchars($row['price'] * $row['quantity']); ?> €</td>
+                        <td>
+                            <form method="POST" style="display: inline;">
+                                <button type="submit" name="remove_article_id" value="<?php echo $row['id']; ?>" style="color: red; border: none; background: none; cursor: pointer;">
+                                    <strong>❌</strong>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>

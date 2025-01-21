@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 18 jan. 2025 à 12:08
+-- Généré le : mar. 21 jan. 2025 à 21:10
 -- Version du serveur : 8.0.31
 -- Version de PHP : 8.0.26
 
@@ -41,14 +41,15 @@ CREATE TABLE IF NOT EXISTS `article` (
   `image_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `author_id` (`author_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `article`
 --
 
 INSERT INTO `article` (`id`, `name`, `description`, `price`, `published_at`, `author_id`, `image_url`) VALUES
-(5, 'Carte Wankul', 'Carte qui t\'encule', 15, '2025-01-14 08:53:05', 3, NULL);
+(8, 'Bras Renforcée', 'Bras permettant d\'améliorer ces capacitées', 350, '2025-01-21 20:40:26', 5, 'uploads/6790063a50b4a.png'),
+(9, 'Main-Cyber', 'Main permettant le piratage au simple contact de la main', 130, '2025-01-21 21:01:46', 5, 'uploads/67900b3a8f2c7.png');
 
 -- --------------------------------------------------------
 
@@ -65,15 +66,7 @@ CREATE TABLE IF NOT EXISTS `cart` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `article_id` (`article_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Déchargement des données de la table `cart`
---
-
-INSERT INTO `cart` (`id`, `user_id`, `article_id`, `quantity`) VALUES
-(3, 3, 4, 3),
-(4, 3, 5, 2);
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -92,7 +85,9 @@ CREATE TABLE IF NOT EXISTS `invoice` (
   `billing_postal_code` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 
 -- --------------------------------------------------------
 
@@ -107,15 +102,15 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `quantity` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `article_id` (`article_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `stock`
 --
 
 INSERT INTO `stock` (`id`, `article_id`, `quantity`) VALUES
-(2, 4, 30),
-(4, 5, 45);
+(8, 9, 40),
+(7, 8, 10);
 
 -- --------------------------------------------------------
 
@@ -136,16 +131,14 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `user`
 --
 
 INSERT INTO `user` (`id`, `username`, `email`, `password`, `balance`, `profile_picture`, `role`, `created_at`) VALUES
-(2, 'Shin', 'adrien.boree@ynov.com', '$2y$10$rVUJ0D18r5Ki/DiuSh3HH.xS/SoeGG67Kd0XGZIhm5vZ48DauxAny', 0, NULL, 'user', '2024-12-17 09:14:38'),
-(3, 'test', 'Zeub@gmail.com', '$2y$10$OKspGFHicWsKlg984dTIaOyKzh7AdhUruCzfPPOQLtoE1Cq5ec0Me', 0, NULL, 'admin', '2025-01-13 12:34:47'),
-(4, 'testnoadmin', 'testnoadmin@gmail.com', '$2y$10$OEtJlFrVUYEcveyT3iiC4ee1FeLHgLX1tYcA.zouNREBypXd4Jixq', 0, NULL, 'user', '2025-01-14 07:24:35');
+(5, 'Adminv2', 'admin@gmail.com', '$2y$10$bc9hOCUGlfmKhzc/nAbHaee8Sete7oVbTtRBtZUsTd1NNLEFrWUo2', 2300, NULL, 'admin', '2025-01-21 17:57:41'),
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

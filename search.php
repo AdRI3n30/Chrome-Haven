@@ -12,7 +12,7 @@ if (!isset($_GET['query']) || empty(trim($_GET['query']))) {
     exit();
 }
 
-$searchTerm = $mysqli->real_escape_string($_GET['query']); // Échapper la chaîne pour éviter les injections SQL
+$searchTerm = $mysqli->real_escape_string($_GET['query']); 
 $query = "SELECT * FROM Article WHERE name LIKE '%$searchTerm%' ORDER BY id DESC";
 
 $result = $mysqli->query($query);

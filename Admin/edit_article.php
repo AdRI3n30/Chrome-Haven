@@ -77,12 +77,12 @@ if (isset($_POST['update_article'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier l'article</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../static/edit_article.css">
 </head>
 <body>
     <h1>Modifier l'article</h1>

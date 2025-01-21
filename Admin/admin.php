@@ -28,8 +28,6 @@ if ($user['role'] !== 'admin') {
 }
 
 $message = "";
-
-// Supprimer un article
 if (isset($_GET['delete_article_id'])) {
     $article_id = $_GET['delete_article_id'];
     $query = "DELETE FROM Article WHERE id = ?";
@@ -43,7 +41,6 @@ if (isset($_GET['delete_article_id'])) {
     }
 }
 
-// Modifier un article
 if (isset($_POST['update_article'])) {
     $article_id = $_POST['article_id'];
     $name = $_POST['name'];
@@ -77,7 +74,7 @@ $invoicesResult = $mysqli->query("SELECT * FROM Invoice");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="static/admin.css">
+    <link rel="stylesheet" href="../static/admin.css">
 </head>
 <body>
     <h1>Admin Panel</h1>
@@ -176,6 +173,6 @@ $invoicesResult = $mysqli->query("SELECT * FROM Invoice");
     </table>
 
     <br>
-    <a href="home.php">Retour à la page d'accueil</a>
+    <a href="../home.php">Retour à la page d'accueil</a>
 </body>
 </html>

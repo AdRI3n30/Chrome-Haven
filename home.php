@@ -68,7 +68,7 @@ if (!$result) {
                     </a>
                     <?php 
                     if ($user && $user['role'] === 'admin'): ?>
-                        <a href="admin.php">
+                        <a href="Admin/admin.php">
                             <img src="source/admin.png" alt="Admin Panel" class="nav-icon">
                         </a>
                     <?php endif; ?>
