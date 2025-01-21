@@ -59,7 +59,7 @@ if ($balance < $totalAmount) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $billing_address = $_POST['billing_address'] ?? '';
         $billing_city = $_POST['billing_city'] ?? '';
-        $billing_postal_code = $_POST['billing_zip'] ?? ''; // Corrigé ici
+        $billing_postal_code = $_POST['billing_postal_code'] ?? ''; 
 
         if (empty($billing_address) || empty($billing_city) || empty($billing_postal_code)) {
             $error = "Veuillez remplir toutes les informations de facturation.";
@@ -88,18 +88,47 @@ if ($balance < $totalAmount) {
             $invoiceStmt->bind_param("idsss", $user_id, $totalAmount, $billing_address, $billing_city, $billing_postal_code);
             $invoiceStmt->execute();
 
-            // Supprimer les articles du panier
-            $deleteCartQuery = "DELETE FROM cart WHERE user_id = ?";
-            $deleteCartStmt = $mysqli->prepare($deleteCartQuery);
+            // Mise à jour des quantités en stock pour chaque article
+            foreach ($cartItems as $item) {
+                $article_id = $item['article_id'];
+                $quantity_purchased = $item['quantity'];
 
-            if (!$deleteCartStmt) {
-                die("Erreur dans la suppression du panier : " . $mysqli->error);
+                // Vérifier la quantité disponible en stock
+                $queryStockCheck = "SELECT quantity FROM stock WHERE article_id = ?";
+                $stmtStockCheck = $mysqli->prepare($queryStockCheck);
+                $stmtStockCheck->bind_param("i", $article_id);
+                $stmtStockCheck->execute();
+                $resultStockCheck = $stmtStockCheck->get_result();
+                $stock = $resultStockCheck->fetch_assoc();
+
+                if ($stock && $stock['quantity'] >= $quantity_purchased) {
+                    // Mettre à jour la quantité en stock
+                    $newStockQuantity = $stock['quantity'] - $quantity_purchased;
+                    $updateStockQuery = "UPDATE stock SET quantity = ? WHERE article_id = ?";
+                    $updateStockStmt = $mysqli->prepare($updateStockQuery);
+                    $updateStockStmt->bind_param("ii", $newStockQuantity, $article_id);
+                    $updateStockStmt->execute();
+                } else {
+                    // Si stock insuffisant, afficher une erreur et arrêter
+                    $error = "Stock insuffisant pour l'article ID $article_id.";
+                    break;
+                }
             }
 
-            $deleteCartStmt->bind_param("i", $user_id);
-            $deleteCartStmt->execute();
+            if (empty($error)) {
+                // Supprimer les articles du panier
+                $deleteCartQuery = "DELETE FROM cart WHERE user_id = ?";
+                $deleteCartStmt = $mysqli->prepare($deleteCartQuery);
 
-            $success = "Votre commande a été validée avec succès.";
+                if (!$deleteCartStmt) {
+                    die("Erreur dans la suppression du panier : " . $mysqli->error);
+                }
+
+                $deleteCartStmt->bind_param("i", $user_id);
+                $deleteCartStmt->execute();
+
+                $success = "Votre commande a été validée avec succès.";
+            }
         }
     }
 }
@@ -129,8 +158,8 @@ if ($balance < $totalAmount) {
             <label for="billing_city">Ville de facturation :</label>
             <input type="text" id="billing_city" name="billing_city" required><br>
 
-            <label for="billing_zip">Code postal :</label>
-            <input type="text" id="billing_zip" name="billing_zip" required><br>
+            <label for="billing_postal_code">Code postal :</label>
+            <input type="text" id="billing_postal_code" name="billing_postal_code" required><br>
 
             <button type="submit">Valider la commande</button>
         </form>
