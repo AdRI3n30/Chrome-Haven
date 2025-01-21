@@ -79,8 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtUpdateStock->bind_param("ii", $quantity, $article_id);
         $stmtUpdateStock->execute();
 
-        echo "Article mis à jour avec succès!";
-        // Confirmation
         echo "<div class='success'>Article mis à jour avec succès!</div>";
     } else {
         echo "<div class='error'>Veuillez remplir tous les champs correctement.</div>";
