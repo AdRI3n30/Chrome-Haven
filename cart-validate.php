@@ -149,28 +149,35 @@ if ($balance < $totalAmount) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Validation du Panier</title>
+    <link rel="stylesheet" href="/static/cart-validate.css">
 </head>
 <body>
-    <h1>Validation du Panier</h1>
+    <div class="container">
+        <h1>Validation du Panier</h1>
 
-    <?php if (!empty($error)): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php elseif (!empty($success)): ?>
-        <p style="color: green;"><?= htmlspecialchars($success) ?></p>
-        <a href="home.php">Retour à l'accueil</a>
-    <?php else: ?>
-        <form method="post">
-            <label for="billing_address">Adresse de facturation :</label>
-            <input type="text" id="billing_address" name="billing_address" value="<?= isset($billing_address) ? htmlspecialchars($billing_address) : '' ?>" required><br>
+        <?php if (!empty($error)): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php elseif (!empty($success)): ?>
+            <p class="success"><?= htmlspecialchars($success) ?></p>
+            <a href="home.php" class="button">Retour à l'accueil</a>
+        <?php else: ?>
+            <form method="post" class="form">
+                <label for="billing_address">Adresse de facturation :</label>
+                <input type="text" id="billing_address" name="billing_address" 
+                       value="<?= isset($billing_address) ? htmlspecialchars($billing_address) : '' ?>" required>
 
-            <label for="billing_city">Ville de facturation :</label>
-            <input type="text" id="billing_city" name="billing_city" value="<?= isset($billing_city) ? htmlspecialchars($billing_city) : '' ?>" required><br>
+                <label for="billing_city">Ville de facturation :</label>
+                <input type="text" id="billing_city" name="billing_city" 
+                       value="<?= isset($billing_city) ? htmlspecialchars($billing_city) : '' ?>" required>
 
-            <label for="billing_postal_code">Code postal :</label>
-            <input type="text" id="billing_postal_code" name="billing_postal_code" value="<?= isset($billing_postal_code) ? htmlspecialchars($billing_postal_code) : '' ?>" required><br>
+                <label for="billing_postal_code">Code postal :</label>
+                <input type="text" id="billing_postal_code" name="billing_postal_code" 
+                       value="<?= isset($billing_postal_code) ? htmlspecialchars($billing_postal_code) : '' ?>" required>
 
-            <button type="submit">Valider la commande</button>
-        </form>
-    <?php endif; ?>
+                <button type="submit" class="button">Valider la commande</button>
+            </form>
+        <?php endif; ?>
+    </div>
 </body>
 </html>
+
