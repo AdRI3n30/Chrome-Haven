@@ -1,4 +1,4 @@
-/* Global Styles */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -21,7 +21,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Container */
+
 .container {
     max-width: 800px;
     margin: 20px auto;
@@ -37,7 +37,7 @@ a:hover {
     text-align: center;
 }
 
-/* Form Styles */
+
 .sell-form {
     display: flex;
     flex-direction: column;
@@ -88,7 +88,7 @@ textarea:focus {
     background-color: #0056b3;
 }
 
-/* Responsive Design */
+
 @media (max-width: 600px) {
     .container {
         padding: 10px;

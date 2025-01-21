@@ -155,9 +155,7 @@ if (isset($_POST['clear_cart'])) {
                     <button type="submit" name="clear_cart">Vider le panier</button>
                 </form>
 
-                <form action="checkout.php" method="post" style="display: inline;">
-                    <button type="submit">Valider le panier</button>
-                </form>
+                <a href='cart-validate.php'><button>Valider la commande</button></a>
             </div>
 
         <?php else: ?>
