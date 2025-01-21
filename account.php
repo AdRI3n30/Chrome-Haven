@@ -1,26 +1,36 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
+// Connexion à la base de données
 $mysqli = new mysqli("localhost", "root", "", "chrome-haven");
 
 if ($mysqli->connect_error) {
     die("Échec de connexion : " . $mysqli->connect_error);
 }
 
-$user_id = $_GET['user_id'] ?? $_SESSION['user_id']; 
-$query = "SELECT id, username, email, balance, profile_picture, role, created_at FROM user WHERE id = ?";
+// ID de l'utilisateur connecté (toujours accessible)
+$current_user_id = $_SESSION['user_id'] ?? null;
+
+// ID de l'utilisateur dont on affiche le profil
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+    $profile_user_id = intval($_GET['id']); // ID passé dans l'URL
+} elseif ($current_user_id) {
+    $profile_user_id = $current_user_id; // Si aucun ID passé, affiche le compte connecté
+} else {
+    // Si aucune information, redirige vers la page de connexion
+    header("Location: login.php");
+    exit;
+}
+
+// Récupération des informations du profil à afficher
+$query = "SELECT id, username, email, balance, role, created_at FROM user WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 
 if (!$stmt) {
-    die("Erreur dans la préparation de la requête pour les informations utilisateur : " . $mysqli->error);
+    die("Erreur dans la requête SQL (user) : " . $mysqli->error);
 }
 
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("i", $profile_user_id);
 $stmt->execute();
 $user_result = $stmt->get_result();
 $user_info = $user_result->fetch_assoc();
@@ -29,78 +39,66 @@ if (!$user_info) {
     die("Utilisateur introuvable.");
 }
 
-$query = "SELECT id, name, price, published_at FROM article WHERE author_id = ?";
+// Récupération des articles postés par cet utilisateur
+$query = "SELECT id, name, price FROM article WHERE author_id = ?";
 $stmt = $mysqli->prepare($query);
 
 if (!$stmt) {
-    die("Erreur dans la préparation de la requête pour les articles : " . $mysqli->error);
+    die("Erreur dans la requête SQL (articles) : " . $mysqli->error);
 }
 
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("i", $profile_user_id);
 $stmt->execute();
 $articles_result = $stmt->get_result();
 
+// Historique des factures uniquement pour l'utilisateur connecté
 $invoices = [];
-if ($user_id == $_SESSION['user_id']) {
-    $invoiceQuery = "SELECT id, transaction_date, amount, billing_address, billing_city, billing_postal_code 
-                     FROM invoice 
-                     WHERE user_id = ? 
-                     ORDER BY transaction_date DESC";
-    $stmt = $mysqli->prepare($invoiceQuery);
+if ($profile_user_id == $current_user_id) {
+    $invoice_query = "SELECT id, transaction_date, amount, billing_address, billing_city, billing_postal_code 
+                      FROM invoice WHERE user_id = ?";
+    $invoice_stmt = $mysqli->prepare($invoice_query);
 
-    if (!$stmt) {
-        die("Erreur dans la préparation de la requête pour les factures : " . $mysqli->error);
+    if (!$invoice_stmt) {
+        die("Erreur dans la requête SQL (invoices) : " . $mysqli->error);
     }
 
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $invoice_result = $stmt->get_result();
-
-    while ($row = $invoice_result->fetch_assoc()) {
+    $invoice_stmt->bind_param("i", $current_user_id);
+    $invoice_stmt->execute();
+    $invoices_result = $invoice_stmt->get_result();
+    while ($row = $invoices_result->fetch_assoc()) {
         $invoices[] = $row;
     }
+    $invoice_stmt->close();
 }
 
-$purchased_articles = [];
-if ($user_id == $_SESSION['user_id']) {
-    $query = "SELECT a.name, a.price, c.quantity FROM cart c
-              INNER JOIN article a ON c.article_id = a.id
-              WHERE c.user_id = ?";
-    $stmt = $mysqli->prepare($query);
+// Mise à jour des informations (uniquement si c'est le compte connecté)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $profile_user_id == $current_user_id) {
+    $new_email = $_POST['email'] ?? null;
+    $new_password = $_POST['password'] ?? null;
 
-    if (!$stmt) {
-        die("Erreur dans la préparation de la requête pour les achats : " . $mysqli->error);
-    }
+    if ($new_email && $new_password) {
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $purchased_result = $stmt->get_result();
-    while ($row = $purchased_result->fetch_assoc()) {
-        $purchased_articles[] = $row;
-    }
-}
+        $update_query = "UPDATE user SET email = ?, password = ? WHERE id = ?";
+        $update_stmt = $mysqli->prepare($update_query);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
-    $new_email = $_POST['email'];
-    $new_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        if (!$update_stmt) {
+            die("Erreur dans la requête SQL (mise à jour) : " . $mysqli->error);
+        }
 
-    $query = "UPDATE user SET email = ?, password = ? WHERE id = ?";
-    $stmt = $mysqli->prepare($query);
-
-    if (!$stmt) {
-        die("Erreur dans la préparation de la requête pour la mise à jour : " . $mysqli->error);
-    }
-
-    $stmt->bind_param("ssi", $new_email, $new_password, $user_id);
-
-    if ($stmt->execute()) {
-        echo "Informations mises à jour avec succès.";
+        $update_stmt->bind_param("ssi", $new_email, $hashed_password, $current_user_id);
+        if ($update_stmt->execute()) {
+            // Redirection pour éviter la double soumission du formulaire
+            header("Location: account.php");
+            exit;
+        } else {
+            die("Échec de la mise à jour.");
+        }
     } else {
-        echo "Erreur lors de la mise à jour des informations : " . $stmt->error;
+        echo "Veuillez remplir tous les champs.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -111,26 +109,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
 </head>
 <body>
     <div class="profile-container">
-        <h1>Profil de <?php echo htmlspecialchars($user_info['username']); ?></h1>
-        <p><span class="label">Email :</span> <?php echo htmlspecialchars($user_info['email']); ?></p>
-        <p><span class="label">Solde :</span> <?php echo number_format($user_info['balance'], 2); ?> €</p>
-        <p><span class="label">Rôle :</span> <?php echo htmlspecialchars($user_info['role']); ?></p>
-        <p><span class="label">Date d'inscription :</span> <?php echo htmlspecialchars($user_info['created_at']); ?></p>
+        <h1>
+            <?php if ($profile_user_id == $current_user_id): ?>
+                Mon compte
+            <?php else: ?>
+                Compte de <?php echo htmlspecialchars($user_info['username']); ?>
+            <?php endif; ?>
+        </h1>
 
-        <?php if ($user_id == $_SESSION['user_id']): ?>
-            <div class="form-container">
-                <h2>Modifier vos informations</h2>
-                <form method="POST">
-                    <label for="email">Nouvel email :</label>
-                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user_info['email']); ?>" required>
+        <p>Email : <?php echo htmlspecialchars($user_info['email']); ?></p>
+        <?php if ($profile_user_id == $current_user_id): ?>
+            <p>Solde : <?php echo number_format($user_info['balance'], 2); ?> €</p>
+            <p>Rôle : <?php echo htmlspecialchars($user_info['role']); ?></p>
+        <?php endif; ?>
+        <p>Date d'inscription : <?php echo htmlspecialchars($user_info['created_at']); ?></p>
 
-                    <label for="password">Nouveau mot de passe :</label>
-                    <input type="password" id="password" name="password" required>
-
-                    <button type="submit">Mettre à jour</button>
-                </form>
-            </div>
-
+        <!-- Si l'utilisateur connecté regarde son propre profil -->
+        <?php if ($profile_user_id == $current_user_id): ?>
+            <h2>Modifier mes informations</h2>
+            <form method="POST">
+                <label for="email">Nouvel email :</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user_info['email']); ?>" required>
+                <label for="password">Nouveau mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Mettre à jour</button>
+            </form>
             <div class="form-container">
                 <h2>Ajouter de l'argent à votre solde</h2>
                 <form method="POST" action="add_balance.php">
@@ -146,7 +149,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
             <?php if ($articles_result->num_rows > 0): ?>
                 <ul>
                     <?php while ($article = $articles_result->fetch_assoc()): ?>
-                        <li><?php echo htmlspecialchars($article['name']); ?> - <?php echo htmlspecialchars($article['price']); ?> €</li>
+                        <li>
+                            <a href="detail.php?id=<?php echo htmlspecialchars($article['id']); ?>">
+                                <?php echo htmlspecialchars($article['name']); ?>
+                            </a> 
+                            - <?php echo htmlspecialchars($article['price']); ?> €
+                        </li>
                     <?php endwhile; ?>
                 </ul>
             <?php else: ?>
@@ -154,20 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
             <?php endif; ?>
         </div>
 
-        <?php if ($user_id == $_SESSION['user_id']): ?>
-            <div class="purchased-container">
-                <h2>Articles achetés via le panier</h2>
-                <?php if (!empty($purchased_articles)): ?>
-                    <ul>
-                        <?php foreach ($purchased_articles as $article): ?>
-                            <li><?php echo htmlspecialchars($article['name']); ?> - <?php echo htmlspecialchars($article['price']); ?> € - Quantité : <?php echo htmlspecialchars($article['quantity']); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>Vous n'avez rien acheté via le panier pour le moment.</p>
-                <?php endif; ?>
-            </div>
-
+        <!-- Historique des factures (uniquement pour l'utilisateur connecté) -->
+        <?php if ($profile_user_id == $current_user_id): ?>
             <div class="invoices-container">
                 <h2>Historique des Achats Validés</h2>
                 <?php if (!empty($invoices)): ?>
@@ -199,13 +195,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id == $_SESSION['user_id']) {
                     <p>Vous n'avez pas encore validé d'achat.</p>
                 <?php endif; ?>
             </div>
+            <form action="logout.php" method="POST" class="logout-form">
+                <button type="submit">Se déconnecter</button>
+            </form>
         <?php endif; ?>
-
-        <form action="logout.php" method="POST" class="logout-form">
-            <button type="submit">Se déconnecter</button>
-        </form>
-
     </div>
+    <a href="home.php" >← Retour à l'accueil</a>
 </body>
-<a href="home.php" class="back-link">← Retour à l'accueil</a>
 </html>

@@ -31,6 +31,14 @@ if (isset($_SESSION['user_id'])) {
     $stmtUser->close();
 }
 
+$sellerQuery = "SELECT username FROM user WHERE id = ?";
+$sellerStmt = $mysqli->prepare($sellerQuery);
+$sellerStmt->bind_param("i", $article['author_id']);
+$sellerStmt->execute();
+$sellerResult = $sellerStmt->get_result();
+$seller = $sellerResult->fetch_assoc();
+$sellerStmt->close();
+
 $query = "SELECT * FROM Article WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 
@@ -104,7 +112,11 @@ $can_edit = $is_admin || ($user_id === $article['author_id']);
             <?php endif; ?>
 
             <div class="seller-info">
-                <p><strong>Vendu par :</strong> <?php echo htmlspecialchars($seller['username']); ?></p>
+                <p><strong>Vendu par :
+                    <a href="account.php?id=<?php echo htmlspecialchars($article['author_id']); ?>">
+                    <?php echo htmlspecialchars($seller['username']); ?>
+                    </a></strong>
+                </p>
             </div>
         </div>
 

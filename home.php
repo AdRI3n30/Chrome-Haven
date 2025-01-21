@@ -91,7 +91,7 @@ if (!$result) {
                 <div class="article">
                     <h3><?php echo htmlspecialchars($article['name']); ?></h3>
                     <?php if (!empty($article['image_url'])): ?>
-                        <img src="<?php echo htmlspecialchars($article['image_url']); ?>" alt="Image de l'article">
+                        <img src="<?php echo htmlspecialchars($article['image_url']); ?>" alt="Image de l'article" class="home-image">  
                     <?php endif; ?>
                     <a href="detail.php?id=<?php echo $article['id']; ?>" class="details-link">Voir les détails</a>
                 </div>
